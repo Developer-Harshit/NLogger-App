@@ -13,7 +13,7 @@ import okhttp3.Response;
 
 public class JsonSender {
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
-    //public static final String BASE_URL = "http://10.0.2.2:8080";
+//    public static final String BASE_URL = "http://10.0.2.2:8080";
     public static final String BASE_URL = "https://nlogger-site.onrender.com";
     Executor executor = Executors.newSingleThreadExecutor();
      void post(String route, String json)  {
@@ -27,6 +27,7 @@ public class JsonSender {
             } catch (Exception e) {
                 Log.d("CUSTOM", "post: There is an error among us");
                 Log.e("CUSTOM",e.toString());
+
 
             }
         });
