@@ -4,17 +4,13 @@ import android.app.Notification;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.service.notification.StatusBarNotification;
-import android.text.SpannableString;
 import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import org.json.JSONObject;
-
-import java.util.Set;
 import java.util.TimeZone;
+
 class NObject {
     private final Notification n;
-
-    // General
     private final String packageName;
     private final long postTime;
     private final long systemTime;
@@ -24,7 +20,7 @@ class NObject {
     private int flags;
     private final int nid;
     private final String tag;
- private String tickerText;
+    private String tickerText;
     private String title;
     private String titleBig;
     private String text;
@@ -46,15 +42,18 @@ class NObject {
         extract();
     }
     private void extract()  {
-        // General
         when           = n.when;
         flags          = n.flags;
         Bundle extras = NotificationCompat.getExtras(n);
+            try {
 
             if (n.tickerText == null) {
                 tickerText = "";
             } else {
-                tickerText = (String) n.tickerText;
+                tickerText =  n.tickerText.toString();
+            }
+            } catch(Exception e) {
+                tickerText = "error while parsing";
             }
             if(extras != null) {
                 title       = getField(extras,NotificationCompat.EXTRA_TITLE);
@@ -71,9 +70,9 @@ class NObject {
                         Bundle msgBundle = (Bundle) tmp;
                         sb.append(msgBundle.getString("text"));
                         sb.append("\n");
-                        Set<String> io = msgBundle.keySet();
+//                        Set<String> io = msgBundle.keySet();
                     }
-                    messages = sb.toString();
+                    messages = "\n" + sb.toString().trim();
                 }
                 CharSequence[] lines = extras.getCharSequenceArray(NotificationCompat.EXTRA_TEXT_LINES);
                 if(lines != null) {
@@ -82,17 +81,21 @@ class NObject {
                         builder.append(line);
                         builder.append("\n");
                     }
-                    textLines = "\n"+builder.toString().trim();
+                    textLines = "\n" + builder.toString().trim();
                 }
             }
         }
 
     public static String getField(Bundle extras,String key) {
-        CharSequence cs = extras.getCharSequence(key);
-        if(cs == null) {
-            return "";
-        } else {
-            return (String) cs;
+        try {
+            CharSequence cs = extras.getCharSequence(key);
+            if(cs == null) {
+                return "";
+            } else {
+                return cs.toString();
+            }
+        } catch (Exception e) {
+            return "error while parsing";
         }
     }
 
